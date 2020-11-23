@@ -4,6 +4,7 @@ import { useAppState } from "./AppStateContext";
 import { CardDragItem } from "./DragItem";
 import { CardContainer } from "./styles";
 import { useItemDrag } from "./useItemDrag";
+import { isHidden } from "./utils/isHidden";
 
 interface CardProps {
   text: string;
@@ -19,7 +20,7 @@ export const Card = ({
   columnId,
   isPreview,
 }: CardProps): JSX.Element => {
-  const { dispatch } = useAppState();
+  const { state, dispatch } = useAppState();
   const ref = useRef<HTMLDivElement>(null);
 
   const { drag } = useItemDrag({ type: "CARD", id, index, text, columnId });
@@ -43,5 +44,13 @@ export const Card = ({
   });
   drag(drop(ref));
 
-  return <CardContainer ref={ref}>{text}</CardContainer>;
+  return (
+    <CardContainer
+      isPreview={isPreview}
+      ref={ref}
+      isHidden={isHidden(isPreview, state.draggedItem, "CARD", id)}
+    >
+      {text}
+    </CardContainer>
+  );
 };
